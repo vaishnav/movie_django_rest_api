@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 # Create your models here.
 class Genere(models.Model):
@@ -15,16 +16,8 @@ class Movie(models.Model):
     release_date = models.DateField()
     genere = models.ForeignKey(Genere, on_delete=models.SET_NULL, blank=True, null=True)
     director = models.CharField(max_length=255)
-    rating = models.DecimalField(max_digits=3,decimal_places=1)
-    description = models.CharField(max_length=500)
+    rating = models.IntegerField(validators=[MaxValueValidator(10),MinValueValidator(1)])
+    description = models.CharField(max_length=500, blank=True, null=True)
 
     def __str__(self):
         return self.title
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(rating__gte=1.0) & models.Q(rating__lte=10.0),
-                name="valid between 1 and 10",
-            )
-        ]
